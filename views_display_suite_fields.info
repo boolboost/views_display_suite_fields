@@ -1,0 +1,13 @@
+name = Views Display Suite fields
+description = Display Suite fileds in views fileds.
+
+version = 1.0
+core = 7.x
+
+package = Views
+
+files[] = views/handler/views_display_suite_fields_handler_ds_field.inc
+
+dependencies[] = ds:ds
+dependencies[] = views:views
+dependencies[] = entity:entity
