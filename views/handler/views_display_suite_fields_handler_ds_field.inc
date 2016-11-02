@@ -63,11 +63,16 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
       );
     }
 
-    $fields = ds_get_fields($this->entity_type, FALSE);
+    $fields = ds_get_fields($this->entity_type);
 
-    $options_fields = array('_none' => t('- None -'));
+    $options_fields = array(
+      '_none' => t('- None -'),
+      'base' => array()
+    );
     foreach ($fields as $field_name => $field) {
-      $options_fields[$field_name] = $field['title'];
+      foreach ($field['ui_limit'] as $ui_limit) {
+        $options_fields[$ui_limit][$field_name] = $field['title'];
+      }
     }
 
     $form['field_name'] = array(
