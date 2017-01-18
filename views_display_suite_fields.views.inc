@@ -13,7 +13,6 @@ function views_display_suite_fields_views_data_alter(&$data) {
     'help' => t('Provides a custom DS field.'),
     'field' => array(
       'handler' => 'views_display_suite_fields_handler_ds_field',
-      'real field' => 'ds_field',
     ),
   );
 
