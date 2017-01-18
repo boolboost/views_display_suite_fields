@@ -100,8 +100,6 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
     }
 
     $entity = entity_load($entity_type, array($entity_id));
-
-    $render = entity_view($entity_type, $entity, $view_mode);
     $fields = field_attach_view($entity_type, $entity, $view_mode);
     if (isset($fields[$field_name])) {
       return drupal_render($fields[$field_name]);
