@@ -17,7 +17,8 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
     // Set base table and field information as used by views_plugin_row to
     // select the entity id if used with default query class.
     $info = entity_get_info($this->entity_type);
-    if (!empty($info['base table']) && $info['base table'] == $this->view->base_table) {
+
+    if (!empty($info['base table']) && $info['base table'] == $this->table) {
       $this->base_table = $info['base table'];
       $this->base_field = $info['entity keys']['id'];
     }
@@ -67,7 +68,6 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
 
     $options_fields = array(
       '_none' => t('- None -'),
-      'base' => array()
     );
     foreach ($fields as $field_name => $field) {
       foreach ($field['ui_limit'] as $ui_limit) {
@@ -90,7 +90,7 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
   }
 
   function render($data) {
-    $entity_id = $data->{$this->base_field};
+    $entity_id = $data->{$this->relationship . '_' . $this->base_field};
     $entity_type = $this->entity_type;
     $view_mode = $this->options['view_mode'];
     $field_name = $this->options['field_name'];
@@ -100,9 +100,14 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
     }
 
     $entity = entity_load($entity_type, array($entity_id));
-    $fields = field_attach_view($entity_type, $entity, $view_mode);
-    if (isset($fields[$field_name])) {
-      return drupal_render($fields[$field_name]);
+
+    if ($entity) {
+      $render = entity_view($entity_type, $entity, $view_mode);
+      $view = current($render[$entity_type]);
+
+      if (isset($view[$field_name])) {
+        return drupal_render($view[$field_name]);
+      }
     }
 
     return '';
