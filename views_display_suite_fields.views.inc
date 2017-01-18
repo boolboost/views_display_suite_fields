@@ -9,7 +9,7 @@
  */
 function views_display_suite_fields_views_data_alter(&$data) {
   $ds_field = array(
-    'title' => t('DS Field'),
+    'group' => t('Display Suite Field'),
     'help' => t('Provides a custom DS field.'),
     'field' => array(
       'handler' => 'views_display_suite_fields_handler_ds_field',
@@ -19,6 +19,7 @@ function views_display_suite_fields_views_data_alter(&$data) {
   foreach ($data as $name => &$item) {
     if (isset($item['table']['entity type'])) {
       $item['ds_field'] = $ds_field;
+      $item['ds_field']['title'] = $item['table']['group'];
     }
   }
 }

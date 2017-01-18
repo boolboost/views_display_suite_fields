@@ -12,7 +12,7 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
     parent::init($view, $display, $options);
 
     // Initialize the entity-type used.
-    $table_data = views_fetch_data($this->view->base_table);
+    $table_data = views_fetch_data($this->table);
     $this->entity_type = $table_data['table']['entity type'];
     // Set base table and field information as used by views_plugin_row to
     // select the entity id if used with default query class.
