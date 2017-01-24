@@ -90,7 +90,12 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
   }
 
   function render($data) {
-    $entity_id = $data->{$this->relationship . '_' . $this->base_field};
+    if ($this->relationship) {
+      $entity_id = $data->{$this->relationship . '_' . $this->base_field};
+    } else {
+      $entity_id = $data->{$this->base_field};
+    }
+
     $entity_type = $this->entity_type;
     $view_mode = $this->options['view_mode'];
     $field_name = $this->options['field_name'];
