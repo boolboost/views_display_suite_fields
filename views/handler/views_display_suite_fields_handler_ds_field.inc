@@ -11,16 +11,18 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
   public function init(&$view, &$display, $options = NULL) {
     parent::init($view, $display, $options);
 
-    // Initialize the entity-type used.
     $table_data = views_fetch_data($this->table);
     $this->entity_type = $table_data['table']['entity type'];
-    // Set base table and field information as used by views_plugin_row to
-    // select the entity id if used with default query class.
+
     $info = entity_get_info($this->entity_type);
 
+    $this->base_field = NULL;
     if (!empty($info['base table']) && $info['base table'] == $this->table) {
-      $this->base_table = $info['base table'];
       $this->base_field = $info['entity keys']['id'];
+    }
+
+    if (module_exists('search_api') && preg_match('/^search_api_index_/', $this->table)) {
+      $this->base_field = 'entity';
     }
   }
 
@@ -90,24 +92,30 @@ class views_display_suite_fields_handler_ds_field extends views_handler_field {
   }
 
   function render($data) {
-    if ($this->relationship) {
-      $entity_id = $data->{$this->relationship . '_' . $this->base_field};
-    } else {
-      $entity_id = $data->{$this->base_field};
-    }
-
     $entity_type = $this->entity_type;
     $view_mode = $this->options['view_mode'];
     $field_name = $this->options['field_name'];
 
-    if ($field_name == '_none') {
+    if ($field_name == '_none' || $this->base_field === NULL) {
       return '';
+    }
+
+    if ($this->relationship) {
+      $entity_id = $data->{$this->relationship . '_' . $this->base_field};
+    }
+    else {
+      $entity_id = $data->{$this->base_field};
+
+      if (module_exists('search_api') && is_object($entity_id)) {
+        $entity_id = entity_id($entity_type, $entity_id);
+      }
     }
 
     $entity = entity_load($entity_type, array($entity_id));
 
     if ($entity) {
       $render = entity_view($entity_type, $entity, $view_mode);
+
       $view = current($render[$entity_type]);
 
       if (isset($view[$field_name])) {
